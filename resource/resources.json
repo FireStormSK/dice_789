@@ -1,0 +1,24 @@
+{
+  "resources":
+  [
+    {"name":"bgImage","type":"image","url":"assets/bg.jpg"},
+    {"name":"egretIcon","type":"image","url":"assets/egret_icon.png"},
+    {"name":"description","type":"json","url":"config/description.json"},
+    {"name":"bg1","type":"image","url":"assets/bg1.jpg"},
+    {"name":"StartPage","type":"image","url":"assets/start1.jpg"},
+    {"name":"TablePage","type":"image","url":"assets/tables.jpg"},
+    {"name":"dice_1","type":"image","url":"assets/dice_1.png"},
+    {"name":"dice_2","type":"image","url":"assets/dice_2.png"},
+    {"name":"dice_3","type":"image","url":"assets/dice_3.png"},
+    {"name":"dice_4","type":"image","url":"assets/dice_4.png"},
+    {"name":"dice_5","type":"image","url":"assets/dice_5.png"},
+    {"name":"dice_6","type":"image","url":"assets/dice_6.png"},
+    {"name":"box","type":"image","url":"assets/box.png"},
+    {"name":"boy","type":"image","url":"assets/boy.jpg"}
+  ],
+
+  "groups":
+  [
+    {"name":"preload","keys":"bg1,StartPage,TablePage,dice_1,dice_2,dice_3,dice_4,dice_5,dice_6,box,boy"}
+  ]
+}
