@@ -143,10 +143,10 @@ var GameOn = (function (_super) {
         User_Avatar.width = 64;
         User_Avatar.height = 64;
         var User_Name = new egret.TextField();
-        if (Main.PLAYERLIST[usernum].name == Main.ME.Name) {
+        if (Main.PLAYERLIST[usernum].Name == Main.ME.Name) {
             User_Name.textColor = 0xFF0000;
         }
-        User_Name.text = Main.PLAYERLIST[usernum].name;
+        User_Name.text = Main.PLAYERLIST[usernum].Name;
         User_Name.x = 75;
         User_Name.y = 20;
         User.addChild(User_Avatar);
@@ -283,22 +283,6 @@ var GameOn = (function (_super) {
     p.onTurn = function (dirc, dice1, dice2) {
         if (dirc == "R") {
             var i = Main.ME.PositionIndex;
-            console.log("playername" + Main.PLAYER_NAME);
-            if (i == Main.PLAYERNUM - 1) {
-                Main.PLAYER_NAME = Main.PLAYERLIST[0].name;
-            }
-            else {
-                Main.PLAYER_NAME = Main.PLAYERLIST[i + 1].name;
-            }
-        }
-        else {
-            var i = Main.ME.PositionIndex;
-            if (i > 0) {
-                Main.PLAYER_NAME = Main.PLAYERLIST[i - 1].name;
-            }
-            else {
-                Main.PLAYER_NAME = Main.PLAYERLIST[Main.PLAYERNUM - 1].name;
-            }
         }
         console.log("方向：" + dirc + "playerlist:" + Main.PLAYERLIST + "i:" + i + "轮到：" + Main.PLAYER_NAME);
         this.WebSend('{"Direction":"' + Main.GAMEDIRECTION + '","NextPlayer":"' + Main.PLAYER_NAME + '","dice1":"' + dice1 + '","dice2":"' + dice2 + '"}');

@@ -59,6 +59,32 @@ class WebSocketCtrl extends egret.Sprite
         var request = <egret.HttpRequest>event.currentTarget;
         var data = JSON.parse(request.response);
         console.log("获取人数返回:"+request.response);
+        Main.PLAYERLIST = new Array<User>();
+        if(data.playerCount == 1) {
+            Main.PLAYER_NAME = Main.ME.name;
+            Main.CANPLAY = true;
+            Main.GAMEDIRECTION = "R";
+        }
+        Main.PLAYERNUM = data.playerCount;
+        for(var i: number = 0;i < data.playerCount;i++)
+        {
+            var user = new User();
+            user.Id = data.playerList[i].id;
+            user.Name = data.playerList[i].name;                          
+            user.Role = data.playerList[i].role;
+            user.JoinIndex = data.playerList[i].joinIndex;
+            user.PositionIndex = data.playerList[i].positionIndex;
+            Main.PLAYERLIST.push(user);
+            if(Main.ME.Name == user.Name)
+            {
+                Main.ME.Id = user.Id;
+                Main.ME.Role = user.Role;
+                Main.ME.JoinIndex = user.JoinIndex;
+                Main.ME.PositionIndex = user.PositionIndex;
+            }
+        }
+        this.dispatchEvent(new egret.Event("GameStart"));
+        /*
         console.log("人数"+data.playerCount+"result:"+data.result+"msg:"+data.msg);
         if(data.playerCount==1)
         {
@@ -76,6 +102,7 @@ class WebSocketCtrl extends egret.Sprite
         }
         this.dispatchEvent(new egret.Event("GameStart"));
         console.log("PlayerCount:"+data.playerCount +"PLAYERLIST:"+Main.PLAYERLIST+"发送GameStart");
+        */
 /*
         var loader:egret.URLLoader = <egret.URLLoader> event.target;
         var data:egret.URLVariables = loader.data;
@@ -150,8 +177,8 @@ class WebSocketCtrl extends egret.Sprite
         watchEvent.dice1 = msgmsg.dice1;
         watchEvent.dice2 = msgmsg.dice2;
         watchEvent.PlayerPosition = data.from;
-
-        if(Main.PLAYER_NAME==Main.ME.name)
+        
+        if(Main.PLAYER_NAME==Main.ME.Name)
         {
             Main.CANPLAY = true;
             this.dispatchEvent(new egret.Event("OnMyTurn"));
