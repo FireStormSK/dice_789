@@ -90,7 +90,7 @@ class GameOn extends egret.Sprite
             this._tooltip.text = "点击骰盅，按照箭头顺序轮到下一位\nRock and Roll";
         }
         else
-            this._tooltip.text = "等待"+Main.PLAYERLIST[0]+"开始游戏";
+            this._tooltip.text = "等待"+Main.PLAYERLIST[0].Name+"开始游戏";
         //用户列表
         this.AddUserList();
         this.createArrow();
@@ -120,9 +120,15 @@ class GameOn extends egret.Sprite
         console.log("gameon人数"+data.playerCount+"playerList:"+data.playerList);
         Main.PLAYERNUM = data.playerCount;
         Main.PLAYERLIST = new Array<User>();
-        for(var i:number = 0;i<=data.playerCount;i++)
+        for(var i:number = 0;i<data.playerCount;i++)
         {
-            Main.PLAYERLIST.push(data.playerList[i]);
+            var user: User = new User();
+            user.Id = data.playerList[i].id;
+            user.Role = data.playerList[i].role;
+            user.Name = data.playerList[i].name;
+            user.JoinIndex = data.playerList[i].joinIndex;
+            user.PositionIndex = data.playerList[i].positionIndex;
+            Main.PLAYERLIST.push(user);
         }
         this.RestartGame();
     }
@@ -134,18 +140,30 @@ class GameOn extends egret.Sprite
         this._box.x = 220;
         this._box.y = 510;
         this._arrow.alpha = 0;
-        if(Main.PLAYERLIST[0].name==Main.ME.Name)
+        //更新玩家信息
+        for(var i: number = 0;i < Main.PLAYERNUM;i++)
         {
-            Main.CANPLAY =true;
-            this._tooltip.text = "点击骰盅，按照箭头顺序轮到下一位\nRock and Roll";
+            if(Main.PLAYERLIST[i].Name == Main.ME.Name)
+            {
+                Main.ME.Id = Main.PLAYERLIST[i].Id;
+                Main.ME.Role = Main.PLAYERLIST[i].Role;
+                Main.ME.JoinIndex = Main.PLAYERLIST[i].JoinIndex;
+                Main.ME.PositionIndex = Main.PLAYERLIST[i].PositionIndex;
+            }
+            if(Main.ME.Role == "1") {
+                Main.CANPLAY = true;
+                this._tooltip.text = "我是游戏主持人，提示大家准备好\n点击骰盅游戏即可开始！";
+            }
+            else {
+                Main.CANPLAY = false;
+                this._tooltip.text = "等待主持人开始游戏";
+            }
         }
-        else
-            this._tooltip.text = "等待"+Main.PLAYERLIST[0]+"开始游戏";
+
         this.onMyTurn();
     }
     private AddUserList()
     {
-       // this.removeChild(this._UserList);
         this._UserList = new egret.DisplayObjectContainer();
         var num:number = Main.PLAYERNUM;
        for(var i:number=0;i<num;i++)
@@ -154,7 +172,7 @@ class GameOn extends egret.Sprite
         }
         if(this.stage)
         {
-            this._UserList.y = this.stage.stageHeight - 120;
+            this._UserList.y = this.stage.stageHeight - 150;
         }
         console.log("人数："+Main.PLAYERNUM);
         this.addChild(this._UserList);
@@ -162,10 +180,12 @@ class GameOn extends egret.Sprite
 
     private AddUser(usernum:number)
     {
-        var User = new egret.DisplayObjectContainer();
+        var user = new egret.DisplayObjectContainer();
         var User_Avatar = new egret.Bitmap();
+        user.width = 100;
+        user.height = 100;
         User_Avatar.texture = RES.getRes("boy");
-        User_Avatar.x = 5;
+        User_Avatar.x = 18;
         User_Avatar.y = 5;
         User_Avatar.width = 64;
         User_Avatar.height = 64;
@@ -174,16 +194,43 @@ class GameOn extends egret.Sprite
         {
             User_Name.textColor = 0xFF0000;
         }
+        user.name = Main.PLAYERLIST[usernum].Name;
         User_Name.text = Main.PLAYERLIST[usernum].Name;
-        User_Name.x = 75;
-        User_Name.y = 20;
-        User.addChild(User_Avatar);
-        User.addChild(User_Name);
-        User.x = (usernum+1) * 200 - 180;
-        console.log("添加用户:"+User_Name.text+usernum);
-        this._UserList.addChild(User);
-    }
+        User_Name.x = 0;
+        User_Name.y = 70;
+        User_Name.width = 100;
+        User_Name.textAlign = egret.HorizontalAlign.CENTER;
+        User_Name.size = 20;
+        user.addChild(User_Avatar);
+        user.addChild(User_Name);
+        user.x = usernum * 100 + 60;
 
+        console.log("添加用户:"+User_Name.text+usernum);
+        if(Main.ME.Role == "1")
+        {
+             user.addEventListener(egret.TouchEvent.TOUCH_MOVE,this.UserPostionHandler,this);
+             user.addEventListener(egret.TouchEvent.TOUCH_END,this.ChagePosition,this);
+             user.touchEnabled = true;
+             console.log("我是管理员");
+        }
+        this._UserList.addChild(user);
+    }
+   
+    private UserPostionHandler(evt: egret.TouchEvent): void {
+        if(evt.type == egret.TouchEvent.TOUCH_MOVE) {    
+            evt.target.x = evt.stageX-50;
+        }
+    }
+    private ChagePosition(evt:egret.TouchEvent):void
+    { 
+        if(evt.type == egret.TouchEvent.TOUCH_END) {
+            console.log("失去焦点");
+            evt.target.x = 60;
+            for(var i: number = 0;i < Main.PLAYERNUM;i++) {
+                Main.PLAYERLIST[i].x = (this._UserList.getChildByName(Main.PLAYERLIST[i].Name)).x;
+            }
+        }
+    }
     private createArrow()
     {
         //绘制划线的提示箭头
@@ -327,13 +374,23 @@ class GameOn extends egret.Sprite
     }
     private onTurn(dirc:string,dice1:number,dice2:number):string
     {
+        var i: number=0;
+        i=Main.ME.PositionIndex;
         if(dirc=="R")
-        {
-            var i:number = Main.ME.PositionIndex;
+        {   
             //向右转
+            i ++;
+            if(i > Main.PLAYERNUM)
+                i = 1;
         }
-        console.log("方向："+dirc+"playerlist:"+Main.PLAYERLIST+"i:"+i+"轮到："+Main.PLAYER_NAME);
-        this.WebSend('{"Direction":"'+Main.GAMEDIRECTION+'","NextPlayer":"'+Main.PLAYER_NAME+'","dice1":"'+dice1+'","dice2":"'+dice2+'"}');
+        if(dirc == "L")
+        {
+            i--;
+            if(i <= 0)
+                i = Main.PLAYERNUM;
+        }
+        console.log("方向："+dirc+"playerlist:"+Main.PLAYERLIST+"i:"+i+"轮到："+Main.PLAYERLIST[i-1].Name);
+        this.WebSend('{"Direction":"' + Main.GAMEDIRECTION + '","NextPlayer":"' + Main.PLAYERLIST[i - 1].Name+'","dice1":"'+dice1+'","dice2":"'+dice2+'"}');
         return Main.PLAYER_NAME;
     }
     public onMyTurn():void
@@ -362,7 +419,7 @@ class GameOn extends egret.Sprite
         {
             console.log("收到用户变化数据:"+"退出");
         }
-        alert("玩家变化，重新开始本局游戏");
+      
     }
     private updateArrow(dirc:string):void
     {

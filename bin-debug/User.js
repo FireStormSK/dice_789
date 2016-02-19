@@ -12,6 +12,7 @@ var User = (function (_super) {
         this.Name = "";
         this.JoinIndex = 0;
         this.PositionIndex = 0;
+        this.x = 0;
     }
     var d = __define,c=User,p=c.prototype;
     return User;
