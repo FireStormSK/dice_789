@@ -6,6 +6,8 @@ class DiceEvent extends egret.Event
     public static PLAY:string = "play";
     public static USERCHANGE:string = "userchange";
     public static WATCH:string = "watch";
+    public static POSITIONCHANGE: string = "positionchange";
+    public names: any;
     public  alert:any;//公共喊话	 不填
     public  game:string=""; //游戏		 必填
     public  table:string="";//桌号		 必填

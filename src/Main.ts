@@ -117,7 +117,7 @@ class Main extends egret.DisplayObjectContainer{
                         this._websocket.addEventListener("OnMyTurn",_Gameon.onMyTurn,_Gameon);
                     this._curState = _Gameon;
                     this._curState.addEventListener(DiceEvent.PLAY,this._websocket.onSocketSend,this._websocket);
-
+                    this._curState.addEventListener(DiceEvent.POSITIONCHANGE,this._websocket.onSocketSend,this._websocket);
                     //当游戏结束后进入游戏结束界面
                     //  this._curState.addEventListener("GameOver",this.gameOver,this);
                     this.addChild(this._curState);

@@ -18,6 +18,7 @@ var DiceEvent = (function (_super) {
     DiceEvent.PLAY = "play";
     DiceEvent.USERCHANGE = "userchange";
     DiceEvent.WATCH = "watch";
+    DiceEvent.POSITIONCHANGE = "positionchange";
     return DiceEvent;
 })(egret.Event);
 egret.registerClass(DiceEvent,'DiceEvent');

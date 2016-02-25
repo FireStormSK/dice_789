@@ -217,7 +217,8 @@ class GameOn extends egret.Sprite
     }
    
     private UserPostionHandler(evt: egret.TouchEvent): void {
-        if(evt.type == egret.TouchEvent.TOUCH_MOVE) {    
+        if(evt.type == egret.TouchEvent.TOUCH_MOVE) {
+            this._UserList.setChildIndex(evt.target,1);
             evt.target.x = evt.stageX-50;
         }
     }
@@ -225,12 +226,55 @@ class GameOn extends egret.Sprite
     { 
         if(evt.type == egret.TouchEvent.TOUCH_END) {
             console.log("失去焦点");
-            evt.target.x = 60;
-            for(var i: number = 0;i < Main.PLAYERNUM;i++) {
+            for(var i: number = 0;i < Main.PLAYERNUM;i++) {           
                 Main.PLAYERLIST[i].x = (this._UserList.getChildByName(Main.PLAYERLIST[i].Name)).x;
+                console.log(Main.PLAYERLIST[i].x);
+            }
+            this.bubbleSort();
+            this.bubbleSortMovie();
+        }
+    }
+    private bubbleSortMovie(): void
+    {
+        for(var i: number = 0;i < Main.PLAYERNUM;i++)
+        {
+            var tw = egret.Tween.get(this._UserList.getChildByName(Main.PLAYERLIST[i].Name));
+            
+            tw.to({ x: (i*100+60),y: (0) },500);
+        }
+    }
+    private bubbleSort():void
+    {
+        for(var i: number=0;i < Main.PLAYERNUM;i++)
+        {
+            for(var j: number=0;j < Main.PLAYERNUM - i - 1;j++)
+            { 
+                if(Main.PLAYERLIST[j].x>Main.PLAYERLIST[j+1].x)
+                {
+                    var tmp = Main.PLAYERLIST[j];
+                    Main.PLAYERLIST[j] = Main.PLAYERLIST[j + 1];
+                    Main.PLAYERLIST[j + 1] = tmp;
+                }
+            }
+        }
+        var playEvent: DiceEvent = new DiceEvent(DiceEvent.POSITIONCHANGE);
+        playEvent.from = Main.ME.Name;
+        this.dispatchEvent(playEvent);
+    }
+    /*
+function bubbleSort($numbers) {
+    $cnt = count($numbers);
+    for($i = 0;$i < $cnt;$i++) {
+        for($j = 0;$j < $cnt - $i - 1;$j++) {
+            if($numbers[$j] > $numbers[$j + 1]) {
+                $temp = $numbers[$j];
+                $numbers[$j] = $numbers[$j + 1];
+                $numbers[$j + 1] = $temp;
             }
         }
     }
+    return $numbers;
+}*/
     private createArrow()
     {
         //绘制划线的提示箭头

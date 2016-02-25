@@ -136,12 +136,30 @@ class WebSocketCtrl extends egret.Sprite
         var data:egret.URLVariables = loader.data;
         console.log("返回POST"+data.toString());
     }*/
+    
     public onSocketSend(evt:DiceEvent):void
     {
-        var msg = '{"alert":{"type":"","msg":""}, "game":"dice", "table":'+Main.TABLE+', "msg":'+evt.msg+' , "from":"'+Main.ME.Name+'","to":"","date":""}';
+        var msg = "";
+        if(evt.type == "play") {
+            msg = '{"alert":{"type":"","msg":""}, "game":"dice", "table":' + Main.TABLE + ', "msg":' + evt.msg + ' , "from":"' + Main.ME.Name + '","to":"","date":""}';         
+        }
+        else if(evt.type =="positionchange")
+        {
+            var names: any=new Array();
+            for(var i = 0;i < Main.PLAYERNUM;i++)
+            {
+                var obj:any= new Object();
+                obj.name = Main.PLAYERLIST[i].Name;
+                names.push(obj);
+            }
+
+            
+            msg = '{"alert":{"type":"69","msg":""}, "game":"10010", "names:"'+JSON.stringify(names)+',"table":' + Main.TABLE + ', "msg":{}, "from":"' + Main.ME.Name + '","to":"","date":""}';         
+        }
         this.webSocket.writeUTF(msg);
-        console.log("发送ws:"+msg);
+        console.log(evt.type + "发送ws:"+msg);
     }
+
     private onSocketOpen():void {
         //  var msg = '{"alert":"", "game":"dice", "table":"1", "msg":"test" , "from":"LichKing","to":"","date":""}';
         var cmd = "Hello Egret WebSocket";
