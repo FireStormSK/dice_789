@@ -138,7 +138,7 @@ var WebSocketCtrl = (function (_super) {
                 obj.name = Main.PLAYERLIST[i].Name;
                 names.push(obj);
             }
-            msg = '{"alert":{"type":"69","msg":""}, "game":"10010", "names:"' + JSON.stringify(names) + ',"table":' + Main.TABLE + ', "msg":{}, "from":"' + Main.ME.Name + '","to":"","date":""}';
+            msg = '{"alert":{"type":"69","msg":""}, "game":"10010", "names":' + JSON.stringify(names) + ',"table":' + Main.TABLE + ', "msg":{}, "from":"' + Main.ME.Name + '","to":"","date":""}';
         }
         this.webSocket.writeUTF(msg);
         console.log(evt.type + "发送ws:" + msg);
@@ -155,7 +155,7 @@ var WebSocketCtrl = (function (_super) {
         var msg = this.webSocket.readUTF();
         console.log("收到数据：" + msg);
         var data = JSON.parse(msg);
-        if (data.alert.type == 11) {
+        if (data.alert.type == 11 || data.alert.type == 69) {
             var playEvent = new DiceEvent(DiceEvent.USERCHANGE);
             playEvent.alert = data.alert;
             this.dispatchEvent(playEvent);
@@ -168,6 +168,7 @@ var WebSocketCtrl = (function (_super) {
         if (data.from == Main.ME.name) {
             return;
         }
+        //同步显示别人的消息
         var watchEvent = new WatchEvent(WatchEvent.WATCH);
         watchEvent.direction = msgmsg.Direction;
         watchEvent.nextPlayerPosition = msgmsg.NextPlayer;

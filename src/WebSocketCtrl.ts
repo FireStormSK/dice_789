@@ -154,7 +154,7 @@ class WebSocketCtrl extends egret.Sprite
             }
 
             
-            msg = '{"alert":{"type":"69","msg":""}, "game":"10010", "names:"'+JSON.stringify(names)+',"table":' + Main.TABLE + ', "msg":{}, "from":"' + Main.ME.Name + '","to":"","date":""}';         
+            msg = '{"alert":{"type":"69","msg":""}, "game":"10010", "names":'+JSON.stringify(names)+',"table":' + Main.TABLE + ', "msg":{}, "from":"' + Main.ME.Name + '","to":"","date":""}';         
         }
         this.webSocket.writeUTF(msg);
         console.log(evt.type + "发送ws:"+msg);
@@ -173,7 +173,7 @@ class WebSocketCtrl extends egret.Sprite
         var msg = this.webSocket.readUTF();
         console.log("收到数据：" + msg);
         var data = JSON.parse(msg);
-        if(data.alert.type==11)
+        if(data.alert.type==11||data.alert.type==69)
         {
             var playEvent:DiceEvent = new DiceEvent(DiceEvent.USERCHANGE);
             playEvent.alert = data.alert;
@@ -185,10 +185,11 @@ class WebSocketCtrl extends egret.Sprite
         var msgmsg = data.msg;
         Main.PLAYER_NAME = msgmsg.NextPlayer;
         Main.GAMEDIRECTION = msgmsg.Direction;
-        if(data.from==Main.ME.name)
+        if(data.from==Main.ME.name)//如果是自己发送的消息，return
         {
             return;
         }
+        //同步显示别人的消息
         var watchEvent:WatchEvent = new WatchEvent(WatchEvent.WATCH);
         watchEvent.direction = msgmsg.Direction;
         watchEvent.nextPlayerPosition = msgmsg.NextPlayer;
